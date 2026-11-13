@@ -1,5 +1,7 @@
 // See https://aka.ms/vscode-remote/devcontainer.json for format details.
+// Adapted from https://github.com/althack/vscode_ros2_workspace (jazzy branch).
 {
+	"name": "ros2-drl-nav",
 	"dockerFile": "Dockerfile",
 	"build": {
 		"args": {
@@ -14,18 +16,21 @@
 		"--security-opt=apparmor:unconfined",
 		"--volume=/tmp/.X11-unix:/tmp/.X11-unix",
 		"--volume=/mnt/wslg:/mnt/wslg",
-		"--ipc=host"
-		// uncomment to use intel iGPU
+		"--ipc=host",
+		"--shm-size=2g"
+		// uncomment to use an Intel iGPU
 		// "--device=/dev/dri"
 	],
 	"containerEnv": {
-		"DISPLAY": "${localEnv:DISPLAY}", // Needed for GUI try ":0" for windows
+		"DISPLAY": "${localEnv:DISPLAY}", // Needed for GUIs; try ":0" on Windows, "host.docker.internal:0" with XQuartz on macOS
 		"WAYLAND_DISPLAY": "${localEnv:WAYLAND_DISPLAY}",
 		"XDG_RUNTIME_DIR": "${localEnv:XDG_RUNTIME_DIR}",
 		"PULSE_SERVER": "${localEnv:PULSE_SERVER}",
-		"LIBGL_ALWAYS_SOFTWARE": "1" // Needed for software rendering of opengl
+		"LIBGL_ALWAYS_SOFTWARE": "1" // Software OpenGL; set to "0" when passing a GPU through
 	},
-	// Set *default* container specific settings.json values on container create.
+	// Install workspace dependencies and build once the container exists.
+	"postCreateCommand": "./setup.sh && ./build.sh",
+	"forwardPorts": [6080],
 	"customizations": {
 		"vscode": {
 			"extensions": [

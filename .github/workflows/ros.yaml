@@ -3,21 +3,19 @@ name: ROS
 on:
   pull_request:
   push:
-    branches: 
+    branches:
       - main
       - develop
   workflow_dispatch:
-    
+
 jobs:
   test:
     name: test
     runs-on: ubuntu-latest
     steps:
-      - 
-        name: Checkout code
+      - name: Checkout code
         uses: actions/checkout@v6
-      -
-        name: Test
+      - name: Test
         uses: ./.github/actions/test/
 
   lint:
@@ -26,22 +24,40 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-          linter: [cppcheck, cpplint, uncrustify, lint_cmake, xmllint, flake8, pep257]
+        linter:
+          [cppcheck, cpplint, uncrustify, lint_cmake, xmllint, flake8, pep257]
     steps:
-      - 
-        name: Checkout code
+      - name: Checkout code
         uses: actions/checkout@v6
-      -
-        name: Run linter
+      - name: Run linter
         uses: ./.github/actions/lint/
-        env: 
+        env:
           LINTER: ${{ matrix.linter }}
+
+  integration:
+    name: integration
+    runs-on: ubuntu-latest
+    timeout-minutes: 60
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v6
+      - name: Build image
+        run: docker build -t ros2-drl-nav:dev --build-arg WORKSPACE=/workspaces/ros2-drl-nav .devcontainer
+      - name: Build workspace and run integration tests
+        run: >
+          docker run --rm --ipc=host --shm-size=2g
+          -v "$PWD":/workspaces/ros2-drl-nav -w /workspaces/ros2-drl-nav
+          ros2-drl-nav:dev bash -lc
+          "./setup.sh && ./build.sh && source install/setup.bash &&
+          DRL_NAV_INTEGRATION=1 xvfb-run -a
+          python3 -m pytest src/drl_nav/test/test_env_integration.py -v -s"
 
   complete:
     name: Tests passed
     needs:
       - lint
       - test
+      - integration
     runs-on: ubuntu-latest
     steps:
       - name: Check

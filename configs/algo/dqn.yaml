@@ -1,0 +1,16 @@
+name: dqn
+discrete_actions: drive # the drive's default action set; or a list of [linear, angular]
+params:
+  policy: MlpPolicy
+  buffer_size: 300000
+  learning_starts: 5000
+  batch_size: 256
+  gamma: 0.99
+  learning_rate: 1.0e-4
+  train_freq: 4
+  gradient_steps: 1
+  target_update_interval: 1000
+  exploration_fraction: 0.2
+  exploration_final_eps: 0.05
+  policy_kwargs:
+    net_arch: [256, 256]

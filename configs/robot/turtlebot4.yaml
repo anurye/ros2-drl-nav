@@ -1,0 +1,16 @@
+# drl_nav.robots.spec.RobotSpec
+name: turtlebot4
+drive: diff
+package: drl_nav_tb4 # the description, spawn launch and bridge
+model_name: turtlebot4
+max_speed: { linear: 0.3, angular: 1.0 } # the Create 3 motion_control caps linear speed at 0.306
+allow_reverse: false
+footprint_radius: 0.3
+base_frame: base_link
+lidar_yaw: 1.5708 # lidar frame yaw relative to base_link (mounted at 90 deg upstream)
+startup_settle_time: 5.0 # lets the Create 3 controllers activate before stepping starts
+topics:
+  scan: /scan
+  odom: /sim_ground_truth_pose # ground truth from irobot_create_gz_toolbox pose_republisher
+  cmd_vel: /cmd_vel
+  contacts: [/bumper_contact]

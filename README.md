@@ -1,105 +1,139 @@
-<p align="center">
-  <img src="docs/banner.png" alt="gym-turtlebot banner" width="100%" />
-</p>
+# ros2-drl-nav
 
-<h1 align="center">gym-turtlebot</h1>
+[![License](https://img.shields.io/badge/license-Apache--2.0-blue.svg)](https://www.apache.org/licenses/LICENSE-2.0)
+[![CI](https://github.com/anurye/ros2-drl-nav/actions/workflows/ros.yaml/badge.svg)](https://github.com/anurye/ros2-drl-nav/actions/workflows/ros.yaml)
+[![ROS 2](https://img.shields.io/badge/ROS2-Jazzy-blue.svg)](https://docs.ros.org/en/jazzy/)
+[![Gazebo](https://img.shields.io/badge/Gazebo-Harmonic-orange.svg)](https://gazebosim.org/docs/harmonic/)
 
-<p align="center">
-  A custom Gymnasium environment to get started with deep reinforcement learning (DRL) using ROS 2 and Gazebo.
-</p>
+A framework for training and benchmarking deep reinforcement learning (DRL) policies for robot navigation using **ROS 2 Jazzy** and **Gazebo Harmonic**.
 
-<p align="center">
-  <a href="https://www.apache.org/licenses/LICENSE-2.0">
-    <img src="https://img.shields.io/badge/license-Apache--2.0-blue.svg" alt="License: Apache 2.0">
-  </a>
-  <a href="https://github.com/anurye/gym-turtlebot/actions/workflows/ros.yaml">
-    <img src="https://github.com/anurye/gym-turtlebot/actions/workflows/ros.yaml/badge.svg" alt="Build Status">
-  </a>
-  <a href="https://docs.ros.org/en/jazzy/Installation.html">
-    <img src="https://img.shields.io/badge/ROS2-Jazzy-blue.svg" alt="ROS 2: Jazzy">
-  </a>
-  <a href="https://gazebosim.org/docs/harmonic/ros_installation/">
-    <img src="https://img.shields.io/badge/Gazebo-Harmonic-orange.svg" alt="Gazebo: Harmonic">
-  </a>
-  <a href="https://www.python.org/downloads/">
-    <img src="https://img.shields.io/badge/python-3.12-blue.svg" alt="Python 3.8+">
-  </a>
-</p>
+Currently supports the **TurtleBot4** differential-drive robot, with Ackermann-steered and omnidirectional robots planned.
 
----
+## Leaderboard
 
-## Overview
+Benchmark results for DQN, DDPG, TD3, SAC, and PPO.
+<!-- leaderboard:start -->
+Benchmark runs in progress.
+<!-- leaderboard:end -->
 
-`gym-turtlebot` provides a lightweight, modular environment for training reinforcement learning agents using a TurtleBot4 robot simulated in **ROS 2 Jazzy** and **Gazebo Harmonic**. It wraps the simulation in a standard [Gymnasium](https://gymnasium.farama.org/) interface to enable fast prototyping and evaluation of DRL algorithms in realistic robotics environment.
+## Getting started
 
----
+### Installation
 
-## Features
-
-- ROS 2–based robot control integration  
-- Customizable Gazebo simulation worlds  
-- Gymnasium-compliant API  
-- Supports headless and visual simulation  
-- Easily extendable for custom robots
-
----
-
-## Installation
-
-### Using Docker
-#### Prerequisites
-- [Docker](https://docs.docker.com/engine/install/)
-- [VSCode](https://code.visualstudio.com/) with [remote containers plugin](https://marketplace.visualstudio.com/items?itemName=ms-vscode-remote.remote-containers) installed.
-
-> [!NOTE]
-> The Docker setup is adapted from [vscode_ros2_workspace](https://github.com/athackst/vscode_ros2_workspace).
-> 
-> Refer to the [template repository](https://github.com/athackst/vscode_ros2_workspace) for more detailed instructions on how to use VS-code and docker for ROS.
-
-#### Steps
-1. Build 
-```bash
-# Clone the repo into your ROS 2 workspace
-mkdir ~/ros2_ws
-cd ~/ros2_ws
-git clone https://github.com/anurye/gym-turtlebot.git
-```
+The recommended setup uses [Docker](https://docs.docker.com/engine/install/). Alternatively, open the repository in a VS Code dev container, which automatically builds the workspace.
 
 ```bash
-# Install dependencies
-cd ~/ros2_ws
-./setup.sh
+git clone https://github.com/anurye/ros2-drl-nav.git
+cd ros2-drl-nav
+
+docker compose up -d dev
+docker compose exec dev ./setup.sh
+docker compose exec dev ./build.sh
+docker compose exec dev bash
 ```
+
+### Training and evaluation
+
+Once inside the container, verify the environment and start training:
 
 ```bash
-# Build the workspace and source the setup script
-cd ~/ros2_ws
-./build.sh
-source install/local_setup.bash
+# Check the environment with a scripted policy
+xvfb-run -a ros2 run drl_nav check_env --launch
+
+# Train SAC on TurtleBot4 (medium difficulty)
+xvfb-run -a ros2 run drl_nav train
+
+# Train TD3 on the hard environment with seed 1
+xvfb-run -a ros2 run drl_nav train env=hard algo=td3 seed=1
 ```
 
-2. Simulation
-```bash
-cd ~/ros2_ws
-ros2 launch tb4_gz_sim simulation.launch.py
-```
+Training is configured with Hydra, so algorithms, environments, seeds, and other parameters can be changed through command-line overrides.
 
-3. Deep reinforcement training example
-> [!IMPORTANT]
-> Gazebo Sim does not support model reset at the moment. To work around this limitation, we reset both the robot's odometry and its pose by using:
-> 1. The `SetPose` service from the [robot localization](https://github.com/cra-ros-pkg/robot_localization) package  to reinitialize odometry, and
-> 2. The `SetEntityPose` service from the [ros_gz_interfaces](https://github.com/gazebosim/ros_gz/tree/ros2/ros_gz_interfaces) package to reposition entities in Gazebo.
+Evaluate a trained policy and update the leaderboard:
 
 ```bash
-python3 src/tb4_drl_navigation/tb4_drl_navigation/examples/sac.py train
+xvfb-run -a ros2 run drl_nav evaluate \
+  experiments/turtlebot4/medium/sac/seed_42 \
+  --launch --results-dir results
+
+ros2 run drl_nav leaderboard
 ```
 
-### Local Setup
+Publish a trained model to Hugging Face:
 
-#### Prerequisites
-- [Ubuntu 24.04](https://ubuntu.com/download/desktop)
-- [ROS 2 Jazzy](https://docs.ros.org/en/jazzy/Installation.html) 
-- [Gazebo Harmonic](https://gazebosim.org/docs/harmonic/ros_installation/)
+```bash
+ros2 run drl_nav publish \
+  experiments/turtlebot4/medium/sac/seed_42 \
+  --repo-id <user>/tb4-nav-sac
+```
 
-#### Steps
-The steps are the same as [above](#steps).
+Checkpoints, tb logs, and resolved configs are saved under:
+
+`experiments/<robot>/<tier>/<algo>/seed_<seed>/`
+
+Parallel training currently requires separate containers with distinct `ROS_DOMAIN_ID` and `GZ_PARTITION` values.
+
+## Using the environment
+
+Environments follow the standard Gymnasium API and can be used independently of the provided training pipeline.
+
+```python
+import gymnasium as gym
+import drl_nav  # Registers DrlNav/* environments
+
+env = gym.make("DrlNav/TurtleBot4-v0", launch_simulation=True)
+
+obs, info = env.reset(seed=0)
+obs, reward, terminated, truncated, info = env.step(
+    env.action_space.sample()
+)
+
+env.close()
+```
+
+### Difficulty levels
+
+Three difficulty levels are available, sharing the same world but differing in obstacle density, clearance, and start–goal distance.
+
+| Environment ID | `env=` | Obstacles | Clearance | Start–goal path |
+|---|---|---|---|---|
+| `DrlNav/TurtleBot4Easy-v0` | `easy` | 0 | – | 1.5–5 m |
+| `DrlNav/TurtleBot4-v0` | `medium` | 12 | 2.0 m | ≥ 1.5 m |
+| `DrlNav/TurtleBot4Hard-v0` | `hard` | 20 | 1.2 m | ≥ 5 m |
+
+Distances are measured along the shortest navigable path.
+
+Environment parameters are documented in [NavigationEnv](https://github.com/anurye/ros2-drl-nav/blob/main/src/drl_nav/drl_nav/envs/navigation.py); robots, tiers and algorithms are configured under `configs/`.
+
+## Running the simulation
+
+The Gazebo simulation can be launched independently of the training environment.
+
+```bash
+# Gazebo GUI + RViz
+ros2 launch drl_nav simulation.launch.py robot:=turtlebot4
+
+# Headless simulation
+xvfb-run -a ros2 launch drl_nav simulation.launch.py \
+  headless:=True use_rviz:=False
+
+# Check simulator services and stepping
+ros2 run drl_nav check_sim
+
+# Measure simulation throughput
+ros2 run drl_nav sim_throughput
+```
+
+### GUI access
+
+On systems without a host X server, the simulation GUI can be accessed through noVNC.
+
+```bash
+./scripts/novnc.sh
+```
+
+Open [http://localhost:6080/vnc.html](http://localhost:6080/vnc.html) and launch the simulation with `DISPLAY=:1`.
+
+## License
+
+Licensed under the [Apache License 2.0](https://www.apache.org/licenses/LICENSE-2.0).

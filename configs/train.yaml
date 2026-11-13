@@ -1,0 +1,24 @@
+# Train an agent. Compose: `train robot=turtlebot4 env=hard algo=td3 seed=1`; sweep: `train -m seed=0,1,2`.
+defaults:
+  - robot: turtlebot4
+  - env: medium
+  - algo: sac
+  - _self_
+
+total_timesteps: 200000
+save_freq: 10000
+eval_freq: 10000
+n_eval_episodes: 5
+seed: 42
+launch_simulation: true # start a headless Gazebo
+device: auto
+log_interval: 25 # episodes between logger dumps
+
+hydra:
+  run:
+    dir: experiments/${robot.name}/${env.name}/${algo.name}/seed_${seed}
+  sweep:
+    dir: experiments
+    subdir: ${robot.name}/${env.name}/${algo.name}/seed_${seed}
+  job:
+    chdir: false

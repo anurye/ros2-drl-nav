@@ -1,0 +1,6 @@
+defaults:
+  - _shared
+  - _self_
+
+name: easy
+id: DrlNav/TurtleBot4Easy-v0

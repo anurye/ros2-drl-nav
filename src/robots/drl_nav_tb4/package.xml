@@ -1,0 +1,31 @@
+<?xml version="1.0"?>
+<?xml-model href="http://download.ros.org/schema/package_format3.xsd" schematypens="http://www.w3.org/2001/XMLSchema"?>
+<package format="3">
+  <name>drl_nav_tb4</name>
+  <version>0.3.0</version>
+  <description>Spawn launch and RViz config for the official TurtleBot4 (turtlebot4_description, Create 3 stack) in drl_nav</description>
+  <maintainer email="anurye.yesuf@gmail.com">ahmed</maintainer>
+  <license>Apache-2.0</license>
+
+  <buildtool_depend>ament_cmake</buildtool_depend>
+
+  <exec_depend>irobot_create_common_bringup</exec_depend>
+  <exec_depend>joint_state_publisher</exec_depend>
+  <exec_depend>irobot_create_gz_bringup</exec_depend>
+  <exec_depend>ros_gz_bridge</exec_depend>
+  <exec_depend>ros_gz_sim</exec_depend>
+  <exec_depend>robot_state_publisher</exec_depend>
+  <exec_depend>drl_nav</exec_depend>
+  <exec_depend>ros2launch</exec_depend>
+  <exec_depend>tf2_ros</exec_depend>
+  <exec_depend>turtlebot4_description</exec_depend>
+  <exec_depend>turtlebot4_gz_bringup</exec_depend>
+  <exec_depend>xacro</exec_depend>
+
+  <test_depend>ament_lint_auto</test_depend>
+  <test_depend>ament_lint_common</test_depend>
+
+  <export>
+    <build_type>ament_cmake</build_type>
+  </export>
+</package>

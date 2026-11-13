@@ -1,0 +1,26 @@
+# Usage: docker compose up -d dev && docker compose exec dev bash  (see README).
+services:
+  dev:
+    build:
+      context: .devcontainer
+      dockerfile: Dockerfile
+      args:
+        WORKSPACE: /workspaces/ros2-drl-nav
+    image: ros2-drl-nav:dev
+    container_name: ros2-drl-nav
+    user: ros
+    working_dir: /workspaces/ros2-drl-nav
+    command: sleep infinity
+    stdin_open: true
+    tty: true
+    ipc: host
+    shm_size: 2g
+    environment:
+      HOME: /home/ros
+      DISPLAY: ${DISPLAY:-}
+      LIBGL_ALWAYS_SOFTWARE: "1"
+    ports:
+      - "6080:6080" # noVNC desktop (scripts/novnc.sh)
+    volumes:
+      - .:/workspaces/ros2-drl-nav
+      - /tmp/.X11-unix:/tmp/.X11-unix

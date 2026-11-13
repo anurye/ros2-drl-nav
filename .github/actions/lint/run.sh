@@ -1,6 +1,8 @@
 #!/bin/bash
 set -e
 
+source /opt/ros/jazzy/setup.bash
+
 ./setup.sh
 
 case "$LINTER" in
@@ -18,4 +20,8 @@ case "$LINTER" in
     ;;
 esac
 
-ament_${LINTER} src/
+if [ "$LINTER" = "flake8" ]; then
+  ament_flake8 --config ament_flake8.ini src/
+else
+  ament_${LINTER} src/
+fi

@@ -1,0 +1,12 @@
+# Settings common to all tiers; tier arguments come from the env id, robot ones from configs/robot.
+world_name: static_world
+obstacle_prefix: obstacle
+goal_sampling_bias: uniform
+shuffle_on_reset: true
+num_bins: 20
+goal_threshold: 0.35
+collision_threshold: 0.4
+collision_source: lidar
+time_delta: 0.1
+physics_step_size: 0.004
+reset_settle_time: 0.5

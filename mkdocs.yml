@@ -1,0 +1,17 @@
+site_name: ros2-drl-nav
+site_description: Deep RL navigation benchmark for ROS 2 and Gazebo
+site_url: https://anurye.github.io/ros2-drl-nav/
+repo_url: https://github.com/anurye/ros2-drl-nav
+theme:
+  name: material
+  palette:
+    primary: indigo
+plugins:
+  - simple:
+      ignore_folders:
+        [build, install, log, experiments, results, src, configs, scripts]
+markdown_extensions:
+  - tables
+  - pymdownx.superfences
+nav:
+  - Overview: README.md

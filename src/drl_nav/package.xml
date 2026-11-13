@@ -1,0 +1,43 @@
+<?xml version="1.0"?>
+<?xml-model href="http://download.ros.org/schema/package_format3.xsd" schematypens="http://www.w3.org/2001/XMLSchema"?>
+<package format="3">
+  <name>drl_nav</name>
+  <version>0.3.0</version>
+  <description>Gymnasium environments and RL benchmark for mobile-robot navigation in ROS 2 / Gazebo</description>
+  <maintainer email="anurye.yesuf@gmail.com">ahmed</maintainer>
+  <license>Apache-2.0</license>
+
+  <depend>rclpy</depend>
+  <depend>builtin_interfaces</depend>
+  <depend>geometry_msgs</depend>
+  <depend>nav_msgs</depend>
+  <depend>sensor_msgs</depend>
+  <depend>std_msgs</depend>
+  <depend>visualization_msgs</depend>
+  <depend>ros_gz_interfaces</depend>
+  <depend>simulation_interfaces</depend>
+  <depend>drl_nav_worlds</depend>
+
+  <!-- Python dependencies -->
+  <depend>python3-numpy</depend>
+  <depend>python3-yaml</depend>
+  <depend>python3-opencv</depend>
+  <depend>python3-scipy</depend>
+  <depend>python3-gymnasium-pip</depend>
+  <depend>python3-stable-baselines3-pip</depend>
+  <depend>python3-tensorboard-pip</depend>
+  <depend>python3-tqdm</depend>
+  <depend>python3-rich</depend>
+  <exec_depend>python3-matplotlib</exec_depend>
+  <exec_depend>ros2launch</exec_depend>
+  <exec_depend>rviz2</exec_depend>
+
+  <test_depend>ament_copyright</test_depend>
+  <test_depend>ament_flake8</test_depend>
+  <test_depend>ament_pep257</test_depend>
+  <test_depend>python3-pytest</test_depend>
+
+  <export>
+    <build_type>ament_python</build_type>
+  </export>
+</package>

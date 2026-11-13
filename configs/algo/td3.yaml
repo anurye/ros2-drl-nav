@@ -1,0 +1,15 @@
+name: td3
+action_noise_sigma: 0.1 # Gaussian exploration noise, per action dimension
+params:
+  policy: MlpPolicy
+  buffer_size: 300000
+  learning_starts: 5000
+  batch_size: 256
+  gamma: 0.99
+  tau: 0.005
+  learning_rate: 3.0e-4
+  train_freq: 1
+  gradient_steps: 1
+  policy_delay: 2
+  policy_kwargs:
+    net_arch: [256, 256]

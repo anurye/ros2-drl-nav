@@ -48,7 +48,7 @@ jobs:
           docker run --rm --ipc=host --shm-size=2g
           -v "$PWD":/workspaces/ros2-drl-nav -w /workspaces/ros2-drl-nav
           ros2-drl-nav:dev bash -lc
-          "./setup.sh && ./build.sh && source install/setup.bash &&
+          "source /opt/ros/jazzy/setup.bash && ./setup.sh && ./build.sh && source install/setup.bash &&
           DRL_NAV_INTEGRATION=1 xvfb-run -a
           python3 -m pytest src/drl_nav/test/test_env_integration.py -v -s"
 
